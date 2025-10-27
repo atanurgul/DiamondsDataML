@@ -1,112 +1,96 @@
-# DiamondsDataML
+# 💎 DiamondsDataML — Diamond Price Prediction
 
-DiamondsDataML — Diamond Price Prediction
+A complete machine learning project for **diamond price prediction** using the classic *Diamonds* dataset from Kaggle.  
+This notebook demonstrates the full data science workflow — from **EDA** and **data cleaning** to **modeling**, **hyperparameter tuning**, and **evaluation**.  
+All work is contained in **`MLdiamonds.ipynb`**.
 
-Machine learning for diamond price prediction using the classic diamonds dataset from Kaggle. The workflow covers EDA, data cleaning, feature preparation, model training, hyperparameter tuning, and evaluation. The entire work is in MLdiamonds.ipynb.
+---
 
-Dataset
+## 📊 Dataset Overview
 
-Source file: /kaggle/input/diamonds/diamonds.csv
+- **Source:** `/kaggle/input/diamonds/diamonds.csv`  
+- **Shape:** 53,940 × 11  
+- **Target variable:** `price`  
 
-Shape (initial): 53,940 × 11
+**Feature types:**
+- **Numeric:** `carat`, `depth`, `table`, `x`, `y`, `z`
+- **Categorical:** `cut`, `color`, `clarity`
 
-Target: price
+> The dataset had no missing values, but contained invalid records (x, y, z = 0) which were removed.  
+> After cleaning, 53,905 valid samples remained.
 
-Features:
+---
 
-Numeric: carat, depth, table, x, y, z
+## 🔍 Exploratory Data Analysis (EDA)
 
-Categorical: cut (Fair–Ideal), color (J–D), clarity (I1–IF)
+- Inspected data types, ranges, and summary statistics with `df.info()` and `df.describe()`
+- Visualized pairwise feature relationships using `seaborn.pairplot`
+- Examined correlations between `price` and numerical variables (`carat`, `x`, `y`, `z`, `depth`, `table`)
+- Checked categorical distributions (`cut`, `color`, `clarity`) and their effects on price
+- Identified outliers and unrealistic values in geometric dimensions
 
-Before cleaning: No missing values; some geometric dimensions (x, y, z) include impossible zeros.
+**Observations:**
+- `carat` is strongly correlated with `price`
+- Higher quality (`cut`, `color`, `clarity`) generally increases price
+- Outliers (depth > 75, table > 75, or zero dimensions) distort relationships
 
-Project Flow
+---
 
-1.EDA
+## 🧹 Data Cleaning and Filtering
 
-  head(), info(), describe()
-
-  Pairwise relationships via pairplot
-
-  Scatter plots of price vs. x, y, z, depth, table
-
-2.Data Cleaning & Filtering
-
-3.Feature Preparation
-
-  LabelEncoder for cut, color, clarity
-
-  StandardScaler for numeric features
-
-  Train/Test split: test_size=0.25, random_state=15
-
-4.Modeling
-
-  Linear Regression (baseline)
-
-  SVR (default hyperparameters)
-
-  SVR + GridSearchCV (hyperparameter optimization)
-
-5.Evaluation
-
-  Metrics: MAE, MSE, R²
-
-  Scatter plots (true vs. predicted)
-
-Data Cleaning & Filters
-
-  Removed physically impossible measurements where any of x, y, or z equals 0
-  
-  x==0: 8 rows; y==0: 7 rows; z==0: 20 rows
-  
-  Applied reasonable ranges:
-  
+**Removed invalid or extreme values:**
+- Dropped all rows where `x`, `y`, or `z` = 0  
+- Applied reasonable range filters:  
   45 < depth < 75
-  
   40 < table < 75
-  
   2 < z < 30
-  
   y < 20
+✅ **Final shape:** 53,905 × 10  
 
-  Final shape after cleaning: 53,905 × 10
+> These steps ensure only physically possible and realistic diamond measurements remain for modeling.
 
-Rationale: Zero dimensions are not physically valid; filtering reduces the impact of extreme outliers on model performance.
+---
 
-Modeling
+## ⚙️ Feature Preparation
 
-Features/Target:
+1. **Encoding:**  
+ - Used `LabelEncoder` to convert categorical columns: `cut`, `color`, `clarity`
+2. **Scaling:**  
+ - Applied `StandardScaler` to all numeric features
+3. **Train/Test Split:**  
+ - 75% training and 25% testing  
+ - `random_state=15` for reproducibility
 
-X = df.drop("price", axis=1)
-y = df["price"]
+✅ **Final shape:** 53,905 × 10  
 
-Encoding: LabelEncoder for cut, color, clarity
+> These steps ensure only physically possible and realistic diamond measurements remain for modeling.
 
-Scaling: StandardScaler (fit on train, transform on test)
+---
 
-Split: train_test_split(test_size=0.25, random_state=15)
+## ⚙️ Feature Preparation
+
+1. **Encoding:**  
+ - Used `LabelEncoder` to convert categorical columns: `cut`, `color`, `clarity`
+2. **Scaling:**  
+ - Applied `StandardScaler` to all numeric features
+3. **Train/Test Split:**  
+ - 75% training and 25% testing  
+ - `random_state=15` for reproducibility
+
+🤖 Modeling Approach
+
+Three regression approaches were tested:
+
+Linear Regression — baseline model
+
+Support Vector Regression (SVR) — nonlinear kernel-based method
+
+SVR with GridSearchCV — hyperparameter tuning for best performance
 
 
-Tried Models
-  
-  LinearRegression (baseline)
-  
-  SVR (default)
-  
-  SVR + GridSearchCV
-  
-  Search space:
-  
-  kernel ∈ {linear, rbf}
-  
-  C ∈ {0.1, 1, 10, 100, 1000}
-  
-  gamma ∈ {1, 0.1, 0.001}
+Model Performance
 
-Results
-
-All scores are on the test set.
+All results evaluated on the test set:
 
 | Model                  |        MAE |         MSE |         R² |
 | ---------------------- | ---------: | ----------: | ---------: |
@@ -115,5 +99,5 @@ All scores are on the test set.
 | **SVR (GridSearchCV)** | **480.67** | **874,992** | **0.9455** |
 
 
-Best model: SVR (rbf)
-Best hyperparameters: {'C': 1000, 'gamma': 0.1, 'kernel': 'rbf'}
+Developed by Atanur Gül
+https://www.kaggle.com/atanurgl
